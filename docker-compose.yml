@@ -1,6 +1,21 @@
 version: "3.8"
 
 services:
+  postgres:
+    container_name: postgres
+    build: 
+      context: ../postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=Qwerty123
+    healthcheck:
+      test: 'psql -U pswd password_manager -c "SELECT 1"'
+      timeout: 10s
+      interval: 5s
+      start_period: 10s
+      retries: 5
+
   client:
     container_name: client
     build:
@@ -18,3 +33,6 @@ services:
       - ../api:/app
     ports:
       - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
